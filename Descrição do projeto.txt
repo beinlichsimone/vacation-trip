@@ -1,0 +1,34 @@
+Padrões de projeto:
+Padrão MVC
+Maven
+Spring Boot
+API REST
+Swagger (não está funcionando)
+actuator
+
+
+
+
+Dados:
+Spring Data (paginação)
+JPA
+postgresql
+
+Segurança:
+Spring security
+jwt
+jsonwebtoken
+
+Testes:
+Mokito 
+JUnit
+
+Microserviços:
+Spring Cloud, Eureka, Feign, Papertrail,  Spring Sleuth, 
+
+config server (curso de microserviços, não implementei)
+
+
+README:
+link logs Papertrail: https://my.papertrailapp.com/systems/nbbnu015491/events?focus=1508567656565989380
+link Swagger: 
