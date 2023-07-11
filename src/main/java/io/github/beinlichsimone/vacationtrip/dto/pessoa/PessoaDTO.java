@@ -16,25 +16,10 @@ import java.util.stream.Collectors;
 @Data
 public class PessoaDTO {
 
-    private Integer id;
+    private String id;
     @NotBlank
     private String nome;
-    private Integer cpf;
-    private Integer idViagem;
+    private String cpf;
+    private String email;
 
-    public PessoaDTO(Pessoa pessoa) {
-        this.id = pessoa.getId();
-        this.nome = pessoa.getNome();
-        this.cpf = pessoa.getCpf();
-        this.idViagem = pessoa.getViagem().getId();
-    }
-
-    public static List<PessoaDTO> converterParaDTO(List<Pessoa> pessoas) {
-        return pessoas.stream().map(PessoaDTO::new).collect(Collectors.toList());
-    }
-
-    public Pessoa converter(ViagemRepository viagemRepository){
-        Viagem viagem = viagemRepository.findById(idViagem).get();
-        return new Pessoa(id, nome, cpf, viagem);
-    }
 }

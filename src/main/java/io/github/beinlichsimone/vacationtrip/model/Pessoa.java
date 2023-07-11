@@ -1,5 +1,6 @@
 package io.github.beinlichsimone.vacationtrip.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,15 +28,12 @@ public class Pessoa {
 
     //@NotBlank deve estar na classe de dto para retornar o erro corretamente
     private String nome;
+    private String cpf;
 
-    //@CPF
-    private Integer cpf;
-
-    //@DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dtNascimento;
 
     private String endereco;
-
     private Integer telefone;
 
     //@Email
@@ -44,15 +42,8 @@ public class Pessoa {
     @OneToMany( mappedBy = "pessoa", fetch = FetchType.EAGER)
     private List<Documento> documentos;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "viagem_id")
     private Viagem viagem;
-
-    public Pessoa(Integer id, String nome, Integer cpf, Viagem viagem) {
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.viagem = viagem;
-    }
 
 }

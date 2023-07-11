@@ -1,11 +1,7 @@
 package io.github.beinlichsimone.vacationtrip.dto.deslocamento;
 
-import io.github.beinlichsimone.vacationtrip.dto.documento.DocumentoDTO;
-import io.github.beinlichsimone.vacationtrip.dto.passeio.PasseioDTO;
-import io.github.beinlichsimone.vacationtrip.dto.viagem.ViagemRetornoDTO;
 import io.github.beinlichsimone.vacationtrip.model.Deslocamento;
 import io.github.beinlichsimone.vacationtrip.model.ImagemDeslocamento;
-import io.github.beinlichsimone.vacationtrip.model.Pessoa;
 import io.github.beinlichsimone.vacationtrip.model.enums.TipoVeiculoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;

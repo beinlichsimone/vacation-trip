@@ -1,4 +1,4 @@
-package io.github.beinlichsimone.vacationtrip.security;
+package io.github.beinlichsimone.vacationtrip.config.security;
 
 import io.github.beinlichsimone.vacationtrip.model.User;
 import io.jsonwebtoken.Claims;

@@ -6,10 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -27,14 +29,13 @@ public class Viagem {
 
     private String descricao;
 
-    //@DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataIda;
 
-    //@DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataVolta;
 
-    @OneToMany( mappedBy = "viagem", fetch = FetchType.EAGER)
-    @Fetch(FetchMode.SUBSELECT)
+    //@OneToMany( mappedBy = "viagem")
+    //@Fetch(FetchMode.SUBSELECT)
+    @OneToMany( mappedBy = "viagem")
     private List<Pessoa> pessoas;
 
     @OneToMany( mappedBy = "viagem", fetch = FetchType.EAGER) //sempre precisa do mappedBy quando é OneToMany para indicar qual é o lado inverso ou não dominante da relação.

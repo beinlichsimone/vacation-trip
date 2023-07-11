@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class PessoaResumoDTO {
     private String nome;
-    private Integer cpf;
+    private String cpf;
 
     public PessoaResumoDTO(Pessoa pessoa){
         this.nome = pessoa.getNome();

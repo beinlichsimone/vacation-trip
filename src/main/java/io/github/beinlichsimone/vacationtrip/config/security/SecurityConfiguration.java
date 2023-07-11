@@ -1,4 +1,4 @@
-package io.github.beinlichsimone.vacationtrip.security;
+package io.github.beinlichsimone.vacationtrip.config.security;
 
 import io.github.beinlichsimone.vacationtrip.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/viagem/*").hasRole("MODERADOR") // permite deletar apenas o usuário com perfil de MODERADOR
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll() //precisa desabilitar quando estiver em produção. Ele retorna informações sobre o funcionamento da API
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()                                   //todo o resto será bloqueado
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -2,7 +2,7 @@ package io.github.beinlichsimone.vacationtrip.controller;
 
 import io.github.beinlichsimone.vacationtrip.dto.LoginForm;
 import io.github.beinlichsimone.vacationtrip.dto.TokenDTO;
-import io.github.beinlichsimone.vacationtrip.security.TokenService;
+import io.github.beinlichsimone.vacationtrip.config.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
