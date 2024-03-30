@@ -18,8 +18,8 @@ public class VoosService {
     public void consulta(String voo) {
 
         LOG.info("Consultando Status do Voo");
-        InfoVooDTO infoVooDTO = vooClient.consultaVoos("1");
+        InfoVooDTO infoVooDTO = vooClient.consultaVoos(voo);
 
-        System.out.println(infoVooDTO.getStatus());
+        System.out.println(infoVooDTO.getVoo());
     }
 }
