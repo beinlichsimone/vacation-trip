@@ -2,14 +2,14 @@ package io.github.beinlichsimone.vacationtrip.dto;
 
 public class InfoVooDTO {
 
-    private String status;
+    private String voo;
 
-    public String getStatus() {
-        return status;
+    public String getVoo() {
+        return voo;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setVoo(String voo) {
+        this.voo = voo;
     }
 
 }
