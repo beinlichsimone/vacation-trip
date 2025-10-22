@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface VooClient {
 
     @RequestMapping("/consulta/{voo}")
-    InfoVooDTO consultaVoos(@PathVariable String voo);
+    InfoVooDTO consultaVoos(@PathVariable("voo") String voo);
 }

@@ -1,20 +1,13 @@
 package io.github.beinlichsimone.vacationtrip.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @NoArgsConstructor
@@ -40,6 +33,7 @@ public class Pessoa {
     private String email;
 
     @OneToMany( mappedBy = "pessoa", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Documento> documentos;
 
     @ManyToOne(fetch = FetchType.LAZY)

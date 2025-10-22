@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/viagem")
-@CrossOrigin(origins = {"http://localhost:4200"}) //url do front. o navegador tava bloqueando o acesso quando a porta do back é diferente do front (CORS).
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"}) // permite Angular e Next.js em dev
 public class ViagemController {
 
     @Autowired

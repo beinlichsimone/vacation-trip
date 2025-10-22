@@ -16,9 +16,16 @@ public class DevSecurityConfiguration extends WebSecurityConfigurerAdapter {
     //configurações de autorização
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/**").permitAll() //tudo o que vier depois de /viagem com o tipo GET deverá liberar sem autenticar
-                //.anyRequest().authenticated() //todo o resto será bloqueado
-                .and().csrf().disable();
+        http
+                .cors() // habilita CORS integrado ao Spring MVC/WebConfig
+                .and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // libera preflight
+                .antMatchers(HttpMethod.GET, "/**").permitAll() // GET liberado em dev
+                .antMatchers(HttpMethod.POST, "/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/**").permitAll()
+                .and()
+                .csrf().disable();
     }
 }
