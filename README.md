@@ -1,6 +1,6 @@
 ## Vacation Trip — Backend (Spring Boot)
 
-API REST para gestão de viagens, pessoas, passeios, documentos e deslocamentos. Implementada em Spring Boot 2.7 (Java 17), com segurança JWT (em produção), PostgreSQL, integrações via OpenFeign e mensageria opcional via RabbitMQ.
+API REST para gestão de viagens de férias. Implementada em Spring Boot 2.7 (Java 17), com segurança JWT (em produção), PostgreSQL, integrações via OpenFeign e mensageria opcional via RabbitMQ.
 
 ### Visão geral
 
@@ -141,4 +141,5 @@ mvn test                  # executar testes
 - Guia para agentes (backend): `AGENTS.md`
 - Guia para agentes (frontend): `frontend/AGENTS.md`
 - Frontend (README): `frontend/README.md`
+
 - Logs Papertrail (histórico do curso): https://my.papertrailapp.com/systems/nbbnu015491/events?focus=1508567656565989380
