@@ -1,0 +1,12 @@
+
+Como rodar:
+1) Backend: subir em http://localhost:8083 (perfil dev ativo)
+2) Frontend:
+   - cd frontend
+   - npm install
+   - npm run dev
+3) Acesse http://localhost:3000
+
+Observações:
+- O frontend chama o backend via proxy /api (configurado em next.config.js).
+- Não é necessário token em dev. Se quiser exigir token, crie .env.local com NEXT_PUBLIC_REQUIRE_AUTH=true e use /login.
