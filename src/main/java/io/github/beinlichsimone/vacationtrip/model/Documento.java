@@ -1,5 +1,6 @@
 package io.github.beinlichsimone.vacationtrip.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Documento {
 
     @ManyToOne
     @JoinColumn(name = "pessoa_id")
+    @JsonBackReference
     private Pessoa pessoa;
 
     public Documento(Integer id, String nome, String numero, String observação, Pessoa pessoa) {

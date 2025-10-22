@@ -46,10 +46,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     //configurações de autorização
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.authorizeRequests()
+        http.cors()
+                .and()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/viagem/*").permitAll() //tudo o que vier depois de /viagem com o tipo GET deverá liberar sem autenticar
                 .antMatchers(HttpMethod.DELETE, "/viagem/*").hasRole("MODERADOR") // permite deletar apenas o usuário com perfil de MODERADOR
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()
+                .antMatchers("/pessoa/**", "/passeio/**", "/documento/**", "/deslocamento/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll() //precisa desabilitar quando estiver em produção. Ele retorna informações sobre o funcionamento da API
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()                                   //todo o resto será bloqueado

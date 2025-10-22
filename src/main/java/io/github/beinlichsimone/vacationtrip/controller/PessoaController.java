@@ -15,10 +15,11 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("pessoa")
-@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"})
 public class PessoaController {
 
     @Autowired
@@ -41,8 +42,11 @@ public class PessoaController {
     }
 
     @GetMapping("/pessoas")
-    public List<Pessoa> getPessoas(){
-        return pessoaRepository.findAll();
+    public List<PessoaDTO> getPessoas(){
+        return pessoaRepository.findAll()
+                .stream()
+                .map(p -> modelMapper.map(p, PessoaDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
@@ -56,13 +60,13 @@ public class PessoaController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Pessoa> atualizar(@PathVariable("id") Integer id, @RequestBody PessoaDTO pessoaDTO){
+    public ResponseEntity<PessoaDTO> atualizar(@PathVariable("id") Integer id, @RequestBody PessoaDTO pessoaDTO){
         Optional<Pessoa> pessoaOp = pessoaRepository.findById(id);
         if (pessoaOp.isPresent()){
             Pessoa pessoa = modelMapper.map(pessoaDTO, Pessoa.class);
             pessoa.setId(id);
             pessoaRepository.save(pessoa);
-            return ResponseEntity.ok(pessoa);
+            return ResponseEntity.ok(modelMapper.map(pessoa, PessoaDTO.class));
         }
         return ResponseEntity.notFound().build();
     }
