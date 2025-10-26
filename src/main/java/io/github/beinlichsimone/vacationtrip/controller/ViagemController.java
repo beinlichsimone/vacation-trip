@@ -1,10 +1,10 @@
 package io.github.beinlichsimone.vacationtrip.controller;
 
 import io.github.beinlichsimone.vacationtrip.dto.viagem.ViagemDTO;
+import io.github.beinlichsimone.vacationtrip.dto.viagem.ViagemDetalheDTO;
 import io.github.beinlichsimone.vacationtrip.model.Viagem;
 import io.github.beinlichsimone.vacationtrip.services.ViagemService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,6 +49,16 @@ public class ViagemController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{id}/detalhe")
+    @Transactional(readOnly = true)
+    public ResponseEntity<ViagemDetalheDTO> detalhe(@PathVariable("id") Integer id){
+        Optional<Viagem> viagem = viagemService.encontrarDetalhesPeloId(id);
+        if (viagem.isPresent()){
+            return ResponseEntity.ok(new ViagemDetalheDTO(viagem.get()));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @PostMapping
     @Transactional
     @CacheEvict (value="listaViagens", allEntries = true)//ao chamar esse método ele irá forçar atualizar o cache. Precisa passar no value o mesmo nome do cache do listar
@@ -75,7 +85,7 @@ public class ViagemController {
     @DeleteMapping("/{id}")
     @Transactional
     @CacheEvict (value="listaViagens", allEntries = true)
-    public ResponseEntity remover(@PathVariable("id") Integer id){
+    public ResponseEntity<Void> remover(@PathVariable("id") Integer id){
         Optional<Viagem> viagem = viagemService.encontrarPeloId(id);
         if (viagem.isPresent()) {
             viagemService.deletarPeloId(id);

@@ -67,6 +67,16 @@ export async function getViagem(id: number): Promise<ViagemDTO> {
   return api(`/viagem/${id}`);
 }
 
+export type ViagemDetalheDTO = ViagemDTO & {
+  pessoas: PessoaDTO[];
+  passeios: PasseioDTO[];
+  deslocamentos: DeslocamentoDTO[];
+};
+
+export async function getViagemDetalhe(id: number): Promise<ViagemDetalheDTO> {
+  return api(`/viagem/${id}/detalhe`);
+}
+
 export async function createViagem(v: ViagemDTO): Promise<ViagemDTO> {
   return api(`/viagem`, { method: "POST", body: v });
 }

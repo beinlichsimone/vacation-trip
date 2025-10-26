@@ -66,7 +66,7 @@ export default function HomePage() {
                 descricao={v.descricao}
                 dataIda={v.dataIda}
                 dataVolta={v.dataVolta}
-                onClick={() => router.push(`/viagem?editId=${v.id}`)}
+                onClick={() => router.push(`/viagem/${v.id}`)}
               />
             </Grid>
           ))}
