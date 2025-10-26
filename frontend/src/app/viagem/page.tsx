@@ -1,9 +1,11 @@
 "use client";
-import { listViagens, createViagem, updateViagem, deleteViagem, ViagemDTO } from "@/lib/api";
+import { listViagens, createViagem, updateViagem, deleteViagem, getViagem, ViagemDTO } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Stack, Card, CardContent, TextField, Button, Alert, Typography, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 
 export default function ViagemPage() {
+  const searchParams = useSearchParams();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<ViagemDTO>({ nome: "", descricao: "" });
@@ -24,7 +26,28 @@ export default function ViagemPage() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    const editIdParam = searchParams.get("editId");
+    if (editIdParam) {
+      const id = Number(editIdParam);
+      setLoading(true);
+      setError(null);
+      (async () => {
+        try {
+          const v = await getViagem(id);
+          setData([v]);
+          setEditingId(id);
+          setForm({ nome: v.nome ?? "", descricao: v.descricao ?? "", dataIda: v.dataIda, dataVolta: v.dataVolta });
+        } catch (e: any) {
+          setError(e.message);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
+      load();
+    }
+  }, [searchParams]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +81,22 @@ export default function ViagemPage() {
           <Stack spacing={2} maxWidth={480} component="form" onSubmit={submit}>
             <TextField label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
             <TextField label="Descrição" value={form.descricao ?? ""} onChange={(e) => setForm({ ...form, descricao: e.target.value })} fullWidth />
+            <TextField
+              label="Data de ida"
+              type="date"
+              value={form.dataIda ?? ""}
+              onChange={(e) => setForm({ ...form, dataIda: e.target.value })}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+            />
+            <TextField
+              label="Data de volta"
+              type="date"
+              value={form.dataVolta ?? ""}
+              onChange={(e) => setForm({ ...form, dataVolta: e.target.value })}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+            />
             <Button type="submit" variant="contained">{editingId ? "Salvar" : "Criar"}</Button>
           </Stack>
         </CardContent>
@@ -72,6 +111,8 @@ export default function ViagemPage() {
                   <TableCell>ID</TableCell>
                   <TableCell>Nome</TableCell>
                   <TableCell>Descrição</TableCell>
+                  <TableCell>Data ida</TableCell>
+                  <TableCell>Data volta</TableCell>
                   <TableCell>Ações</TableCell>
                 </TableRow>
               </TableHead>
@@ -81,6 +122,8 @@ export default function ViagemPage() {
                     <TableCell>{v.id}</TableCell>
                     <TableCell>{v.nome}</TableCell>
                     <TableCell>{v.descricao}</TableCell>
+                    <TableCell>{v.dataIda ? new Date(v.dataIda).toLocaleDateString() : ""}</TableCell>
+                    <TableCell>{v.dataVolta ? new Date(v.dataVolta).toLocaleDateString() : ""}</TableCell>
                     <TableCell>
                       <Button size="small" onClick={() => onEdit(v)}>Editar</Button>
                       <Button size="small" color="error" onClick={() => onDelete(v.id)} sx={{ ml: 1 }}>Excluir</Button>
