@@ -12,10 +12,13 @@ export default function DocumentoPage() {
 
   const load = async () => {
     setLoading(true);
-    const [dRes, pRes] = await Promise.all([listDocumentos(), listPessoas()]);
-    setData(dRes ?? []);
-    setPessoas(pRes ?? []);
-    setLoading(false);
+    try {
+      const [dRes, pRes] = await Promise.all([listDocumentos(), listPessoas()]);
+      setData(Array.isArray(dRes) ? dRes : []);
+      setPessoas(Array.isArray(pRes) ? pRes : []);
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => { load(); }, []);
 

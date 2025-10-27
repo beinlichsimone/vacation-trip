@@ -90,7 +90,7 @@ export async function deleteViagem(id: number): Promise<void> {
 }
 
 // Pessoa endpoints
-export type PessoaDTO = { id?: number; nome: string; cpf?: string; email?: string };
+export type PessoaDTO = { id?: number; nome: string; cpf?: string; email?: string; idViagem?: number };
 export async function listPessoas() { return api(`/pessoa/pessoas`); }
 export async function getPessoa(id: number) { return api(`/pessoa/${id}`); }
 export async function createPessoa(p: PessoaDTO) { return api(`/pessoa`, { method: "POST", body: p }); }
