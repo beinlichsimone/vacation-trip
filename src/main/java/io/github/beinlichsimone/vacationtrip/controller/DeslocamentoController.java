@@ -3,79 +3,52 @@ package io.github.beinlichsimone.vacationtrip.controller;
 import io.github.beinlichsimone.vacationtrip.dto.deslocamento.DeslocamentoAtualizarDTO;
 import io.github.beinlichsimone.vacationtrip.dto.deslocamento.DeslocamentoDTO;
 import io.github.beinlichsimone.vacationtrip.dto.deslocamento.DeslocamentoDetalheDTO;
-import io.github.beinlichsimone.vacationtrip.model.Deslocamento;
-import io.github.beinlichsimone.vacationtrip.repository.DeslocamentoRepository;
-import io.github.beinlichsimone.vacationtrip.repository.PasseioRepository;
-import io.github.beinlichsimone.vacationtrip.repository.ViagemRepository;
+import io.github.beinlichsimone.vacationtrip.services.DeslocamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("deslocamento")
+@RequestMapping({"/deslocamentos", "/deslocamento"})
 public class DeslocamentoController {
 
     @Autowired
-    private DeslocamentoRepository deslocamentoRepository;
-
-    @Autowired
-    private ViagemRepository viagemRepository;
-
-    @Autowired
-    private PasseioRepository passeioRepository;
-
+    private DeslocamentoService deslocamentoService;
 
     @PostMapping
-    @Transactional
     public ResponseEntity<DeslocamentoDTO> cadastrar(@RequestBody @Valid DeslocamentoDTO deslocamentoDTO, UriComponentsBuilder uriBuilder){
-        Deslocamento deslocamento = deslocamentoDTO.converter(viagemRepository, passeioRepository);
-        deslocamentoRepository.save(deslocamento);
-
-        URI uri = uriBuilder.path("deslocamento/{id}").buildAndExpand(deslocamento.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DeslocamentoDTO((deslocamento)));
+        DeslocamentoDTO created = deslocamentoService.create(deslocamentoDTO);
+        URI uri = uriBuilder.path("/deslocamentos/{id}").buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uri).body(created);
     }
 
-    @GetMapping("/deslocamentos")
-    public List<DeslocamentoDTO> getDeslocamentos(){
-        List<Deslocamento> deslocamentos = deslocamentoRepository.findAll();
-        return DeslocamentoDTO.converterParaDTO(deslocamentos);
+    @GetMapping({"", "/deslocamentos"})
+    public Page<DeslocamentoDTO> getDeslocamentos(Pageable pageable){
+        return deslocamentoService.list(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DeslocamentoDetalheDTO> getDeslocamentoById(@PathVariable("id") Integer id){
-        Optional<Deslocamento> deslocamento = deslocamentoRepository.findById(id);
-        if (deslocamento.isPresent()){
-            return ResponseEntity.ok(new DeslocamentoDetalheDTO(deslocamento.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return deslocamentoService.get(id)
+                .map(dto -> ResponseEntity.ok(new DeslocamentoDetalheDTO(new io.github.beinlichsimone.vacationtrip.model.Deslocamento(dto.getId(), dto.getNome(), dto.getLocal(), dto.getDescricao(), dto.getValor(), dto.getLink(), dto.getVeiculo(), dto.getIda(), dto.getVolta(), null, null))))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    @Transactional
-    public ResponseEntity<DeslocamentoDTO> atualizar(@PathVariable("id") Integer id, @RequestBody DeslocamentoAtualizarDTO deslocamentoAtualizarDTO){
-        Optional<Deslocamento> deslocamento = deslocamentoRepository.findById(id);
-        if (deslocamento.isPresent()){
-            Deslocamento deslocamentoAtualizada = deslocamentoAtualizarDTO.atualizar(id, deslocamentoRepository);
-            return ResponseEntity.ok(new DeslocamentoDTO(deslocamentoAtualizada));
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<DeslocamentoDTO> atualizar(@PathVariable("id") Integer id, @RequestBody @Valid DeslocamentoAtualizarDTO deslocamentoAtualizarDTO){
+        return ResponseEntity.of(deslocamentoService.update(id, deslocamentoAtualizarDTO));
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity remover (@PathVariable("id") Integer id){
-        Optional<Deslocamento> deslocamento = deslocamentoRepository.findById(id);
-        if (deslocamento.isPresent()){
-            deslocamentoRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
+    public ResponseEntity<Void> remover (@PathVariable("id") Integer id){
+        boolean deleted = deslocamentoService.delete(id);
+        if (deleted) return ResponseEntity.noContent().build();
         return ResponseEntity.notFound().build();
     }
 

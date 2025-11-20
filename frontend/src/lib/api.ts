@@ -61,11 +61,11 @@ export async function listViagens(params?: { page?: number; size?: number }): Pr
   if (params?.page !== undefined) query.set("page", String(params.page));
   if (params?.size !== undefined) query.set("size", String(params.size));
   const suffix = query.toString() ? `?${query.toString()}` : "";
-  return api(`/viagem/viagens${suffix}`);
+  return api(`/viagens${suffix}`);
 }
 
 export async function getViagem(id: number): Promise<ViagemDTO> {
-  return api(`/viagem/${id}`);
+  return api(`/viagens/${id}`);
 }
 
 export type ViagemDetalheDTO = ViagemDTO & {
@@ -75,25 +75,25 @@ export type ViagemDetalheDTO = ViagemDTO & {
 };
 
 export async function getViagemDetalhe(id: number): Promise<ViagemDetalheDTO> {
-  return api(`/viagem/${id}/detalhe`);
+  return api(`/viagens/${id}/detalhe`);
 }
 
 export async function createViagem(v: ViagemDTO): Promise<ViagemDTO> {
-  return api(`/viagem`, { method: "POST", body: v });
+  return api(`/viagens`, { method: "POST", body: v });
 }
 
 export async function updateViagem(id: number, v: ViagemDTO): Promise<ViagemDTO> {
-  return api(`/viagem/${id}`, { method: "PUT", body: v });
+  return api(`/viagens/${id}`, { method: "PUT", body: v });
 }
 
 export async function deleteViagem(id: number): Promise<void> {
-  return api(`/viagem/${id}`, { method: "DELETE" });
+  return api(`/viagens/${id}`, { method: "DELETE" });
 }
 
 export async function uploadViagemImagem(id: number, file: File): Promise<ViagemDTO> {
   const form = new FormData();
   form.append("file", file);
-  const res = await fetch(`${API_BASE}/viagem/${id}/imagem`, {
+  const res = await fetch(`${API_BASE}/viagens/${id}/imagem`, {
     method: "POST",
     headers: {
       // não definir Content-Type manualmente; o browser define o boundary
@@ -110,27 +110,36 @@ export async function uploadViagemImagem(id: number, file: File): Promise<Viagem
 
 // Pessoa endpoints
 export type PessoaDTO = { id?: number; nome: string; cpf?: string; email?: string; idViagem?: number };
-export async function listPessoas() { return api(`/pessoa/pessoas`); }
-export async function getPessoa(id: number) { return api(`/pessoa/${id}`); }
-export async function createPessoa(p: PessoaDTO) { return api(`/pessoa`, { method: "POST", body: p }); }
-export async function updatePessoa(id: number, p: PessoaDTO) { return api(`/pessoa/${id}`, { method: "PUT", body: p }); }
-export async function deletePessoa(id: number) { return api(`/pessoa/${id}`, { method: "DELETE" }); }
+export async function listPessoas(): Promise<any[]> {
+  const res = await api<any>(`/pessoas`);
+  return Array.isArray(res) ? res : (res?.content ?? []);
+}
+export async function getPessoa(id: number) { return api(`/pessoas/${id}`); }
+export async function createPessoa(p: PessoaDTO) { return api(`/pessoas`, { method: "POST", body: p }); }
+export async function updatePessoa(id: number, p: PessoaDTO) { return api(`/pessoas/${id}`, { method: "PUT", body: p }); }
+export async function deletePessoa(id: number) { return api(`/pessoas/${id}`, { method: "DELETE" }); }
 
 // Passeio endpoints
 export type PasseioDTO = { id?: number; nome: string; descricao?: string; links?: string; dataPasseio?: string; idViagem: number };
-export async function listPasseios() { return api(`/passeio/passeios`); }
-export async function getPasseio(id: number) { return api(`/passeio/${id}`); }
-export async function createPasseio(p: PasseioDTO) { return api(`/passeio`, { method: "POST", body: p }); }
-export async function updatePasseio(id: number, p: PasseioDTO) { return api(`/passeio/${id}`, { method: "PUT", body: p }); }
-export async function deletePasseio(id: number) { return api(`/passeio/${id}`, { method: "DELETE" }); }
+export async function listPasseios(): Promise<any[]> {
+  const res = await api<any>(`/passeios`);
+  return Array.isArray(res) ? res : (res?.content ?? []);
+}
+export async function getPasseio(id: number) { return api(`/passeios/${id}`); }
+export async function createPasseio(p: PasseioDTO) { return api(`/passeios`, { method: "POST", body: p }); }
+export async function updatePasseio(id: number, p: PasseioDTO) { return api(`/passeios/${id}`, { method: "PUT", body: p }); }
+export async function deletePasseio(id: number) { return api(`/passeios/${id}`, { method: "DELETE" }); }
 
 // Documento endpoints
 export type DocumentoDTO = { id?: number; nome: string; numero?: string; idPessoa: number };
-export async function listDocumentos() { return api(`/documento/documentos`); }
-export async function getDocumento(id: number) { return api(`/documento/${id}`); }
-export async function createDocumento(d: DocumentoDTO) { return api(`/documento`, { method: "POST", body: d }); }
-export async function updateDocumento(id: number, d: DocumentoDTO) { return api(`/documento/${id}`, { method: "PUT", body: d }); }
-export async function deleteDocumento(id: number) { return api(`/documento/${id}`, { method: "DELETE" }); }
+export async function listDocumentos(): Promise<any[]> {
+  const res = await api<any>(`/documentos`);
+  return Array.isArray(res) ? res : (res?.content ?? []);
+}
+export async function getDocumento(id: number) { return api(`/documentos/${id}`); }
+export async function createDocumento(d: DocumentoDTO) { return api(`/documentos`, { method: "POST", body: d }); }
+export async function updateDocumento(id: number, d: DocumentoDTO) { return api(`/documentos/${id}`, { method: "PUT", body: d }); }
+export async function deleteDocumento(id: number) { return api(`/documentos/${id}`, { method: "DELETE" }); }
 
 // Deslocamento endpoints
 export type DeslocamentoDTO = {
@@ -146,10 +155,13 @@ export type DeslocamentoDTO = {
   idPasseio: number;
   idViagem: number;
 };
-export async function listDeslocamentos() { return api(`/deslocamento/deslocamentos`); }
-export async function getDeslocamento(id: number) { return api(`/deslocamento/${id}`); }
-export async function createDeslocamento(d: DeslocamentoDTO) { return api(`/deslocamento`, { method: "POST", body: d }); }
-export async function updateDeslocamento(id: number, d: DeslocamentoDTO) { return api(`/deslocamento/${id}`, { method: "PUT", body: d }); }
-export async function deleteDeslocamento(id: number) { return api(`/deslocamento/${id}`, { method: "DELETE" }); }
+export async function listDeslocamentos(): Promise<any[]> {
+  const res = await api<any>(`/deslocamentos`);
+  return Array.isArray(res) ? res : (res?.content ?? []);
+}
+export async function getDeslocamento(id: number) { return api(`/deslocamentos/${id}`); }
+export async function createDeslocamento(d: DeslocamentoDTO) { return api(`/deslocamentos`, { method: "POST", body: d }); }
+export async function updateDeslocamento(id: number, d: DeslocamentoDTO) { return api(`/deslocamentos/${id}`, { method: "PUT", body: d }); }
+export async function deleteDeslocamento(id: number) { return api(`/deslocamentos/${id}`, { method: "DELETE" }); }
 
 

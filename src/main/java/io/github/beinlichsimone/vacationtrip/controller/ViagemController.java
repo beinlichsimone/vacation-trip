@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/viagem")
+@RequestMapping({"/viagens", "/viagem"})
 @CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"}) // permite Angular e Next.js em dev
 public class ViagemController {
 
@@ -36,7 +36,7 @@ public class ViagemController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("/viagens")
+    @GetMapping({"", "/viagens"})
     @Cacheable(value="listaViagens")
     public Page<ViagemDTO> getViagens(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao){
     // O cache não deve ser usado em tabelas que são muito utilizadas, pois existe um custo de processamento armazenar e apagar a memória cache. Deve ser estudado onde faz sentido utilizar o cache
@@ -55,29 +55,24 @@ public class ViagemController {
     }
 
     @GetMapping("/{id}/detalhe")
-    @Transactional(readOnly = true)
     public ResponseEntity<ViagemDetalheDTO> detalhe(@PathVariable("id") Integer id){
         Optional<Viagem> viagem = viagemService.encontrarDetalhesPeloId(id);
-        if (viagem.isPresent()){
-            return ResponseEntity.ok(new ViagemDetalheDTO(viagem.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return viagem.map(v -> ResponseEntity.ok(new ViagemDetalheDTO(v)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    @Transactional
     @CacheEvict (value="listaViagens", allEntries = true)//ao chamar esse método ele irá forçar atualizar o cache. Precisa passar no value o mesmo nome do cache do listar
     public ResponseEntity<ViagemDTO> cadastrar(@RequestBody ViagemDTO viagemDTO, UriComponentsBuilder uriBuilder){
 
         Viagem salvo = viagemService.salvar(modelMapper.map(viagemDTO, Viagem.class));
         ViagemDTO body = modelMapper.map(salvo, ViagemDTO.class);
 
-        URI uri = uriBuilder.path("viagem/{id}").buildAndExpand(salvo.getId()).toUri();
+        URI uri = uriBuilder.path("/viagens/{id}").buildAndExpand(salvo.getId()).toUri();
         return ResponseEntity.created(uri).body(body);
     }
 
     @PutMapping("/{id}")
-    @Transactional
     @CacheEvict (value="listaViagens", allEntries = true)
     public ResponseEntity<Viagem> atualizar(@PathVariable("id") Integer id, @RequestBody ViagemDTO viagemDTO) {
         Optional<Viagem> viagem = viagemService.encontrarPeloId(id);
@@ -119,13 +114,12 @@ public class ViagemController {
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
     @CacheEvict (value="listaViagens", allEntries = true)
     public ResponseEntity<Void> remover(@PathVariable("id") Integer id){
         Optional<Viagem> viagem = viagemService.encontrarPeloId(id);
         if (viagem.isPresent()) {
             viagemService.deletarPeloId(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }

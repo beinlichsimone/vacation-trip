@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/checklists")
+@RequestMapping({"/checklists", "/checkList"})
 public class ChecklistController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class ChecklistController {
         return ResponseEntity.created(uri).body(created);
     }
 
-    @GetMapping
+    @GetMapping({"", "/checklists"})
     public Page<ChecklistDTO> list(Pageable pageable){
         return service.list(pageable);
     }
