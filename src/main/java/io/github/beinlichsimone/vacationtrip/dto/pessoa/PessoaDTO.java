@@ -21,5 +21,6 @@ public class PessoaDTO {
     private String nome;
     private String cpf;
     private String email;
+    private Integer idViagem;
 
 }

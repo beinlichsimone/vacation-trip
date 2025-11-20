@@ -53,6 +53,7 @@ export type ViagemDTO = {
   descricao?: string;
   dataIda?: string; // yyyy-MM-dd
   dataVolta?: string; // yyyy-MM-dd
+  imagem?: string;
 };
 
 export async function listViagens(params?: { page?: number; size?: number }): Promise<any> {
@@ -67,6 +68,16 @@ export async function getViagem(id: number): Promise<ViagemDTO> {
   return api(`/viagem/${id}`);
 }
 
+export type ViagemDetalheDTO = ViagemDTO & {
+  pessoas: PessoaDTO[];
+  passeios: PasseioDTO[];
+  deslocamentos: DeslocamentoDTO[];
+};
+
+export async function getViagemDetalhe(id: number): Promise<ViagemDetalheDTO> {
+  return api(`/viagem/${id}/detalhe`);
+}
+
 export async function createViagem(v: ViagemDTO): Promise<ViagemDTO> {
   return api(`/viagem`, { method: "POST", body: v });
 }
@@ -79,8 +90,26 @@ export async function deleteViagem(id: number): Promise<void> {
   return api(`/viagem/${id}`, { method: "DELETE" });
 }
 
+export async function uploadViagemImagem(id: number, file: File): Promise<ViagemDTO> {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`${API_BASE}/viagem/${id}/imagem`, {
+    method: "POST",
+    headers: {
+      // não definir Content-Type manualmente; o browser define o boundary
+      ...getAuthHeader(),
+    },
+    body: form,
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || `Upload failed: ${res.status}`);
+  }
+  return (await res.json()) as ViagemDTO;
+}
+
 // Pessoa endpoints
-export type PessoaDTO = { id?: number; nome: string; cpf?: string; email?: string };
+export type PessoaDTO = { id?: number; nome: string; cpf?: string; email?: string; idViagem?: number };
 export async function listPessoas() { return api(`/pessoa/pessoas`); }
 export async function getPessoa(id: number) { return api(`/pessoa/${id}`); }
 export async function createPessoa(p: PessoaDTO) { return api(`/pessoa`, { method: "POST", body: p }); }

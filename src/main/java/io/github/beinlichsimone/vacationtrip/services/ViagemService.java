@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,12 +18,17 @@ public class ViagemService {
     @Autowired
     private ViagemRepository viagemRepository;
 
-    public void salvar(Viagem viagem) {
-        viagemRepository.save(viagem);
+    public Viagem salvar(Viagem viagem) {
+        return viagemRepository.save(viagem);
     }
 
     public Optional<Viagem> encontrarPeloId(Integer id){
         return viagemRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Viagem> encontrarDetalhesPeloId(Integer id){
+        return viagemRepository.findWithDetalhesById(id);
     }
 
     public void deletarPeloId(Integer id){

@@ -39,18 +39,24 @@ export default function DeslocamentoPage() {
       <Typography variant="h4">Deslocamentos</Typography>
       <Card>
         <CardContent>
-          <Stack spacing={2} maxWidth={600} component="form" onSubmit={submit}>
-            <TextField placeholder="Nome" label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
-            <TextField placeholder="Local" label="Local" value={form.local ?? ""} onChange={(e) => setForm({ ...form, local: e.target.value })} fullWidth />
-            <TextField placeholder="Descrição" label="Descrição" value={form.descricao ?? ""} onChange={(e) => setForm({ ...form, descricao: e.target.value })} fullWidth />
-            <Select value={form.idViagem as unknown as number} onChange={(e) => setForm({ ...form, idViagem: Number(e.target.value) })} displayEmpty>
-              <MenuItem value={0}>Selecione a viagem</MenuItem>
-              {viagens.map((v: any) => (<MenuItem key={v.id} value={v.id}>{v.nome}</MenuItem>))}
-            </Select>
-            <Select value={form.idPasseio as unknown as number} onChange={(e) => setForm({ ...form, idPasseio: Number(e.target.value) })} displayEmpty>
-              <MenuItem value={0}>Selecione o passeio</MenuItem>
-              {passeios.map((p: any) => (<MenuItem key={p.id} value={p.id}>{p.nome}</MenuItem>))}
-            </Select>
+          <Stack spacing={2} component="form" onSubmit={submit}>
+            <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="stretch">
+              <Stack spacing={2} sx={{ flex: 1 }}>
+                <TextField placeholder="Nome" label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
+                <TextField placeholder="Descrição" label="Descrição" value={form.descricao ?? ""} onChange={(e) => setForm({ ...form, descricao: e.target.value })} fullWidth />
+                <Select value={form.idPasseio as unknown as number} onChange={(e) => setForm({ ...form, idPasseio: Number(e.target.value) })} displayEmpty fullWidth>
+                  <MenuItem value={0}>Selecione o passeio</MenuItem>
+                  {passeios.map((p: any) => (<MenuItem key={p.id} value={p.id}>{p.nome}</MenuItem>))}
+                </Select>
+              </Stack>
+              <Stack spacing={2} sx={{ flex: 1 }}>
+                <TextField placeholder="Local" label="Local" value={form.local ?? ""} onChange={(e) => setForm({ ...form, local: e.target.value })} fullWidth />
+                <Select value={form.idViagem as unknown as number} onChange={(e) => setForm({ ...form, idViagem: Number(e.target.value) })} displayEmpty fullWidth>
+                  <MenuItem value={0}>Selecione a viagem</MenuItem>
+                  {viagens.map((v: any) => (<MenuItem key={v.id} value={v.id}>{v.nome}</MenuItem>))}
+                </Select>
+              </Stack>
+            </Stack>
             <Button type="submit" variant="contained">{editingId ? "Salvar" : "Criar"}</Button>
           </Stack>
         </CardContent>

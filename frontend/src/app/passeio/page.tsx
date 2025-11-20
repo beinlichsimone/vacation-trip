@@ -37,14 +37,20 @@ export default function PasseioPage() {
       <Typography variant="h4">Passeios</Typography>
       <Card>
         <CardContent>
-          <Stack spacing={2} maxWidth={480} component="form" onSubmit={submit}>
-            <TextField label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
-            <TextField label="Descrição" value={form.descricao ?? ""} onChange={(e) => setForm({ ...form, descricao: e.target.value })} fullWidth />
-            <TextField label="Links" value={form.links ?? ""} onChange={(e) => setForm({ ...form, links: e.target.value })} fullWidth />
-            <Select value={form.idViagem} onChange={(e) => setForm({ ...form, idViagem: Number(e.target.value) })} displayEmpty>
-              <MenuItem value={0}>Selecione a viagem</MenuItem>
-              {viagens.map((v: any) => (<MenuItem key={v.id} value={v.id}>{v.nome}</MenuItem>))}
-            </Select>
+          <Stack spacing={2} component="form" onSubmit={submit}>
+            <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="stretch">
+              <Stack spacing={2} sx={{ flex: 1 }}>
+                <TextField label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
+                <TextField label="Links" value={form.links ?? ""} onChange={(e) => setForm({ ...form, links: e.target.value })} fullWidth />
+              </Stack>
+              <Stack spacing={2} sx={{ flex: 1 }}>
+                <Select value={form.idViagem} onChange={(e) => setForm({ ...form, idViagem: Number(e.target.value) })} displayEmpty fullWidth>
+                  <MenuItem value={0}>Selecione a viagem</MenuItem>
+                  {viagens.map((v: any) => (<MenuItem key={v.id} value={v.id}>{v.nome}</MenuItem>))}
+                </Select>
+                <TextField label="Descrição" value={form.descricao ?? ""} onChange={(e) => setForm({ ...form, descricao: e.target.value })} fullWidth />
+              </Stack>
+            </Stack>
             <Button type="submit" variant="contained">{editingId ? "Salvar" : "Criar"}</Button>
           </Stack>
         </CardContent>

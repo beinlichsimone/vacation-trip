@@ -25,12 +25,15 @@ public class ViagemDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dataVolta;
 
+    private String imagem;
+
     public ViagemDTO(Viagem viagem) {
         this.Id = viagem.getId();
         this.nome = viagem.getNome();
         this.descricao = viagem.getDescricao();
         this.dataIda = viagem.getDataIda();
         this.dataVolta = viagem.getDataVolta();
+        this.imagem = viagem.getImagem();
     }
 
     public static Page<ViagemDTO> converterParaDTOcomPage(Page<Viagem> viagens) {
