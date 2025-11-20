@@ -46,11 +46,11 @@ public class Passeio {
     @JoinColumn(name = "viagem_id")
     private Viagem viagem;
 
-    public Passeio(Integer id, String nome, String descricao, String observação, String links, LocalDate dataPasseio, Viagem viagem) {
+    public Passeio(Integer id, String nome, String descricao, String observacao, String links, LocalDate dataPasseio, Viagem viagem) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
-        this.observacao = observação;
+        this.observacao = observacao;
         this.links = links;
         this.dataPasseio = dataPasseio;
         this.viagem = viagem;

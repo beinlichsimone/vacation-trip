@@ -26,7 +26,7 @@ public class PasseioDetalheDTO {
     private Integer id;
     private String nome;
     private String descricao;
-    private String observação;
+    private String observacao;
     private String links;
     private LocalDate dataPasseio;
     private Integer idViagem;
@@ -37,7 +37,7 @@ public class PasseioDetalheDTO {
         this.id = passeio.getId();
         this.nome = passeio.getNome();
         this.descricao = passeio.getDescricao();
-        this.observação = passeio.getObservacao();
+        this.observacao = passeio.getObservacao();
         this.links = passeio.getLinks();
         this.dataPasseio = passeio.getDataPasseio();
         this.idViagem = passeio.getViagem().getId();

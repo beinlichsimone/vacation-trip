@@ -34,7 +34,7 @@ public class DocumentoController {
         documentoRepository.save(documento);
 
         URI uri = uriBuilder.path("documento/{id}").buildAndExpand(documento.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DocumentoDTO((documento)));
+        return ResponseEntity.created(uri).body(new DocumentoDTO(documento));
     }
 
     @GetMapping("/documentos")
@@ -57,8 +57,8 @@ public class DocumentoController {
     public ResponseEntity<DocumentoDTO> atualizar(@PathVariable("id") Integer id, @RequestBody DocumentoAtualizarDTO documentoAtualizarDTO){
         Optional<Documento> documento = documentoRepository.findById(id);
         if (documento.isPresent()){
-            Documento documentoAtualizada = documentoAtualizarDTO.atualizar(id, documentoRepository);
-            return ResponseEntity.ok(new DocumentoDTO(documentoAtualizada));
+            Documento documentoAtualizado = documentoAtualizarDTO.atualizar(id, documentoRepository);
+            return ResponseEntity.ok(new DocumentoDTO(documentoAtualizado));
         }
         return ResponseEntity.notFound().build();
     }
