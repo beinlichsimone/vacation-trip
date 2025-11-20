@@ -66,6 +66,7 @@ export default function HomePage() {
                 descricao={v.descricao}
                 dataIda={v.dataIda}
                 dataVolta={v.dataVolta}
+                imageUrl={v.imagem}
                 onClick={() => router.push(`/viagem/${v.id}`)}
               />
             </Grid>

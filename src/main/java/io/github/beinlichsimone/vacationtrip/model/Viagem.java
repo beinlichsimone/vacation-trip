@@ -7,6 +7,7 @@ import org.hibernate.annotations.FetchMode;
  
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
  
 import java.util.List;
@@ -21,7 +22,7 @@ public class Viagem {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    //@NotBlank deve estar na classe de dto para retornar o erro corretamente
+    @NotBlank //deve estar na classe de dto para retornar o erro corretamente
     private String nome;
 
     private String descricao;
@@ -30,8 +31,10 @@ public class Viagem {
 
     private LocalDate dataVolta;
 
-    //@OneToMany( mappedBy = "viagem")
-    //@Fetch(FetchMode.SUBSELECT)
+    @Lob 
+    @Basic(fetch = FetchType.LAZY)
+    private String imagem;
+
     @OneToMany( mappedBy = "viagem", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private List<Pessoa> pessoas;
@@ -43,6 +46,8 @@ public class Viagem {
     @OneToMany( mappedBy = "viagem", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private List<Deslocamento> deslocamentos;
+
+    
 
     @OneToOne
     private CheckList checkList;

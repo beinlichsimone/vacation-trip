@@ -5,24 +5,29 @@ const BACKEND_BASE = process.env.BACKEND_URL || "http://localhost:8083";
 async function forward(req: NextRequest, path: string, method: string) {
   const url = `${BACKEND_BASE}/${path}`;
   const headers = new Headers();
-  // Encaminha apenas cabeçalhos essenciais; não repassa Origin/Host
+  // Encaminha cabeçalhos essenciais
   const contentType = req.headers.get("content-type");
   if (contentType) headers.set("content-type", contentType);
   const auth = req.headers.get("authorization");
   if (auth) headers.set("authorization", auth);
 
-  const body = method === "GET" || method === "HEAD" ? undefined : await req.text();
+  const body = method === "GET" || method === "HEAD" ? undefined : (req.body as any);
 
   const res = await fetch(url, {
     method,
     headers,
     body,
-  });
+    // necessário quando body é ReadableStream no Node 18+
+    // @ts-expect-error duplex é aceito pelo fetch do Node
+    duplex: body ? "half" : undefined,
+  } as any);
 
-  const resText = await res.text();
-  return new NextResponse(resText, {
+  // Repassa resposta (texto/JSON/binário) conforme backend
+  const contentTypeRes = res.headers.get("content-type") || "application/octet-stream";
+  const buf = await res.arrayBuffer();
+  return new NextResponse(buf, {
     status: res.status,
-    headers: { "content-type": res.headers.get("content-type") || "text/plain" },
+    headers: { "content-type": contentTypeRes },
   });
 }
 

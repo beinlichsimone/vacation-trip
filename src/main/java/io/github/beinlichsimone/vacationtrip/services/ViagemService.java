@@ -18,8 +18,8 @@ public class ViagemService {
     @Autowired
     private ViagemRepository viagemRepository;
 
-    public void salvar(Viagem viagem) {
-        viagemRepository.save(viagem);
+    public Viagem salvar(Viagem viagem) {
+        return viagemRepository.save(viagem);
     }
 
     public Optional<Viagem> encontrarPeloId(Integer id){

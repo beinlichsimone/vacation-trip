@@ -15,10 +15,15 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/viagem")
@@ -64,10 +69,11 @@ public class ViagemController {
     @CacheEvict (value="listaViagens", allEntries = true)//ao chamar esse método ele irá forçar atualizar o cache. Precisa passar no value o mesmo nome do cache do listar
     public ResponseEntity<ViagemDTO> cadastrar(@RequestBody ViagemDTO viagemDTO, UriComponentsBuilder uriBuilder){
 
-        viagemService.salvar(modelMapper.map(viagemDTO, Viagem.class));
+        Viagem salvo = viagemService.salvar(modelMapper.map(viagemDTO, Viagem.class));
+        ViagemDTO body = modelMapper.map(salvo, ViagemDTO.class);
 
-        URI uri = uriBuilder.path("viagem/{id}").buildAndExpand(viagemDTO.getId()).toUri();
-        return ResponseEntity.created(uri).body(viagemDTO);
+        URI uri = uriBuilder.path("viagem/{id}").buildAndExpand(salvo.getId()).toUri();
+        return ResponseEntity.created(uri).body(body);
     }
 
     @PutMapping("/{id}")
@@ -80,6 +86,36 @@ public class ViagemController {
             return ResponseEntity.ok(viagemAtualizada);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping(path = "/{id}/imagem", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
+    @CacheEvict(value = "listaViagens", allEntries = true)
+    public ResponseEntity<ViagemDTO> uploadImagem(@PathVariable("id") Integer id, @RequestParam("file") MultipartFile file) {
+        try {
+            Optional<Viagem> opt = viagemService.encontrarPeloId(id);
+            if (opt.isEmpty()) return ResponseEntity.notFound().build();
+
+            Viagem v = opt.get();
+
+            Path baseDir = Path.of("uploads", "viagens");
+            Files.createDirectories(baseDir);
+
+            String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "imagem";
+            String ext = original.contains(".") ? original.substring(original.lastIndexOf('.')) : "";
+            String filename = id + "-" + UUID.randomUUID() + ext;
+            Path target = baseDir.resolve(filename);
+
+            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+
+            String publicUrl = "/uploads/viagens/" + filename;
+            v.setImagem(publicUrl);
+            viagemService.salvar(v);
+
+            return ResponseEntity.ok(modelMapper.map(v, ViagemDTO.class));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")

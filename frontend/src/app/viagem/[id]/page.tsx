@@ -43,6 +43,9 @@ export default function ViagemDetalhePage() {
       ) : data ? (
         <Stack spacing={2}>
           <Typography variant="h4">{data.nome}</Typography>
+          { (data as any).imagem && (
+            <img src={(data as any).imagem as string} alt={data.nome} style={{ width: 480, maxWidth: "100%", height: 240, objectFit: "cover", borderRadius: 8 }} />
+          )}
           {data.descricao && <Typography variant="body1">{data.descricao}</Typography>}
           <Stack direction="row" spacing={1}>
             {data.dataIda && <Chip label={`Ida: ${new Date(data.dataIda as any).toLocaleDateString()}`} />}
