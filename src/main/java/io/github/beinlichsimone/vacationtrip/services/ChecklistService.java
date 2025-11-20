@@ -25,6 +25,7 @@ public class ChecklistService {
     @Transactional
     public ChecklistDTO create(ChecklistDTO dto) {
         CheckList entity = new CheckList();
+        entity.setNome(dto.getNome());
         entity.setChecked(dto.getChecked());
         entity.setObservacao(dto.getObservacao());
         if (dto.getIdViagem() != null) {
@@ -52,6 +53,7 @@ public class ChecklistService {
             return Optional.empty();
         }
         CheckList entity = maybeEntity.get();
+        entity.setNome(dto.getNome());
         entity.setChecked(dto.getChecked());
         entity.setObservacao(dto.getObservacao());
         if (dto.getIdViagem() != null) {

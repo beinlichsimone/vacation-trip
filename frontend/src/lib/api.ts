@@ -164,4 +164,15 @@ export async function createDeslocamento(d: DeslocamentoDTO) { return api(`/desl
 export async function updateDeslocamento(id: number, d: DeslocamentoDTO) { return api(`/deslocamentos/${id}`, { method: "PUT", body: d }); }
 export async function deleteDeslocamento(id: number) { return api(`/deslocamentos/${id}`, { method: "DELETE" }); }
 
+// Checklist endpoints
+export type ChecklistDTO = { id?: number; nome: string; checked?: boolean; observacao?: string; idViagem?: number };
+export async function listChecklists(): Promise<any[]> {
+  const res = await api<any>(`/checklists`);
+  return Array.isArray(res) ? res : (res?.content ?? []);
+}
+export async function getChecklist(id: number) { return api(`/checklists/${id}`); }
+export async function createChecklist(c: ChecklistDTO) { return api(`/checklists`, { method: "POST", body: c }); }
+export async function updateChecklist(id: number, c: ChecklistDTO) { return api(`/checklists/${id}`, { method: "PUT", body: c }); }
+export async function deleteChecklist(id: number) { return api(`/checklists/${id}`, { method: "DELETE" }); }
+
 

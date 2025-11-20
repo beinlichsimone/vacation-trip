@@ -15,6 +15,7 @@ export default function AppFrame({ children }: PropsWithChildren) {
           <Link href="/passeio" passHref legacyBehavior><MuiLink underline="none" color="text.primary">Passeios</MuiLink></Link>
           <Link href="/documento" passHref legacyBehavior><MuiLink underline="none" color="text.primary">Documentos</MuiLink></Link>
           <Link href="/deslocamento" passHref legacyBehavior><MuiLink underline="none" color="text.primary">Deslocamentos</MuiLink></Link>
+          <Link href="/checklist" passHref legacyBehavior><MuiLink underline="none" color="text.primary">Checklists</MuiLink></Link>
           <Box sx={{ ml: "auto" }} />
           <Link href="/login" passHref legacyBehavior><Button variant="contained">Login</Button></Link>
         </Toolbar>
