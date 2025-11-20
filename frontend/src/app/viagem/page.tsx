@@ -129,25 +129,31 @@ export default function ViagemPage() {
       <Card>
         <CardContent>
           <Stack spacing={2} component="form" onSubmit={submit} direction="row" alignItems="flex-start">
-            <Stack spacing={2} sx={{ maxWidth: 480, width: "100%" }}>
-              <TextField label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
-              <TextField label="Descrição" value={form.descricao ?? ""} onChange={(e) => setForm({ ...form, descricao: e.target.value })} fullWidth />
-              <TextField
-                label="Data de ida"
-                type="date"
-                value={form.dataIda ?? ""}
-                onChange={(e) => setForm({ ...form, dataIda: e.target.value })}
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-              />
-              <TextField
-                label="Data de volta"
-                type="date"
-                value={form.dataVolta ?? ""}
-                onChange={(e) => setForm({ ...form, dataVolta: e.target.value })}
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-              />
+            <Stack spacing={2} sx={{ flex: 1, minWidth: 0 }}>
+              <Stack spacing={2} direction={{ xs: "column", md: "row" }} alignItems="stretch">
+                <Stack spacing={2} sx={{ flex: 1 }}>
+                  <TextField label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
+                  <TextField
+                    label="Data de ida"
+                    type="date"
+                    value={form.dataIda ?? ""}
+                    onChange={(e) => setForm({ ...form, dataIda: e.target.value })}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                  />
+                </Stack>
+                <Stack spacing={2} sx={{ flex: 1 }}>
+                  <TextField label="Descrição" value={form.descricao ?? ""} onChange={(e) => setForm({ ...form, descricao: e.target.value })} fullWidth />
+                  <TextField
+                    label="Data de volta"
+                    type="date"
+                    value={form.dataVolta ?? ""}
+                    onChange={(e) => setForm({ ...form, dataVolta: e.target.value })}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                  />
+                </Stack>
+              </Stack>
               <Button type="submit" variant="contained">{editingId ? "Salvar" : "Criar"}</Button>
             </Stack>
             <Stack spacing={1} sx={{ width: 240 }}>

@@ -40,13 +40,19 @@ export default function DocumentoPage() {
       <Typography variant="h4">Documentos</Typography>
       <Card>
         <CardContent>
-          <Stack spacing={2} maxWidth={480} component="form" onSubmit={submit}>
-            <TextField label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
-            <TextField label="Número" value={form.numero ?? ""} onChange={(e) => setForm({ ...form, numero: e.target.value })} fullWidth />
-            <Select value={form.idPessoa as unknown as number} onChange={(e) => setForm({ ...form, idPessoa: Number(e.target.value) })} displayEmpty>
-              <MenuItem value={0}>Selecione a pessoa</MenuItem>
-              {pessoas.map((p: any) => (<MenuItem key={p.id} value={p.id}>{p.nome}</MenuItem>))}
-            </Select>
+          <Stack spacing={2} component="form" onSubmit={submit}>
+            <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="stretch">
+              <Stack spacing={2} sx={{ flex: 1 }}>
+                <TextField label="Nome" value={form.nome ?? ""} onChange={(e) => setForm({ ...form, nome: e.target.value })} required fullWidth />
+                <Select value={form.idPessoa as unknown as number} onChange={(e) => setForm({ ...form, idPessoa: Number(e.target.value) })} displayEmpty fullWidth>
+                  <MenuItem value={0}>Selecione a pessoa</MenuItem>
+                  {pessoas.map((p: any) => (<MenuItem key={p.id} value={p.id}>{p.nome}</MenuItem>))}
+                </Select>
+              </Stack>
+              <Stack spacing={2} sx={{ flex: 1 }}>
+                <TextField label="Número" value={form.numero ?? ""} onChange={(e) => setForm({ ...form, numero: e.target.value })} fullWidth />
+              </Stack>
+            </Stack>
             <Button type="submit" variant="contained">{editingId ? "Salvar" : "Criar"}</Button>
           </Stack>
         </CardContent>
