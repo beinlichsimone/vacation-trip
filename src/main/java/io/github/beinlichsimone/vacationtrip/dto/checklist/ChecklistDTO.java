@@ -12,18 +12,18 @@ import lombok.NoArgsConstructor;
 @Data
 public class ChecklistDTO {
     private Integer id;
-    private Boolean check;
+    private Boolean checked;
     private String observacao;
     private Integer idViagem;
 
     public CheckList converter(ViagemRepository viagemRepository){
         Viagem viagem = viagemRepository.findById(idViagem).get();
-        return new CheckList(id, check, observacao, viagem);
+        return new CheckList(id, checked, observacao, viagem);
     }
 
     public ChecklistDTO(CheckList entity) {
         this.id = entity.getId();
-        this.check = entity.getCheck();
+        this.checked = entity.getChecked();
         this.observacao = entity.getObservacao();
         this.idViagem = (entity.getViagem() != null ? entity.getViagem().getId() : null);
     }

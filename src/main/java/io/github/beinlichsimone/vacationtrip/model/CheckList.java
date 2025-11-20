@@ -19,7 +19,8 @@ public class CheckList {
     @NotBlank
     private String nome;
 
-    private Boolean check;
+    @Column(name = "checked")
+    private Boolean checked;
 
     private String observacao;
 
@@ -27,9 +28,9 @@ public class CheckList {
     @JoinColumn(name = "viagem_id")
     private Viagem viagem;
 
-    public CheckList(Integer id, Boolean check, String observacao, Viagem viagem) {
+    public CheckList(Integer id, Boolean checked, String observacao, Viagem viagem) {
         this.id = id;
-        this.check = check;
+        this.checked = checked;
         this.observacao = observacao;
         this.viagem = viagem;
     }
