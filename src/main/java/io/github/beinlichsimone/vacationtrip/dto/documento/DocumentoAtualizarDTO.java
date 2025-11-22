@@ -20,7 +20,7 @@ public class DocumentoAtualizarDTO {
     @NotBlank
     private String nome;
     private String numero;
-    private String observação;
+    private String observacao;
 
     public Documento atualizar(Integer Id, DocumentoRepository documentoRepository){
         Optional<Documento> documentoOp = documentoRepository.findById(Id);
@@ -28,7 +28,7 @@ public class DocumentoAtualizarDTO {
 
         documento.setNome(this.nome);
         documento.setNumero(this.numero);
-        documento.setObservação(this.observação);
+        documento.setObservacao(this.observacao);
 
         return documento;
     }

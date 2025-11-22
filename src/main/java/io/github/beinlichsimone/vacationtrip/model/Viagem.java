@@ -47,10 +47,9 @@ public class Viagem {
     @Fetch(FetchMode.SUBSELECT)
     private List<Deslocamento> deslocamentos;
 
-    
-
-    @OneToOne
-    private CheckList checkList;
+    @OneToMany( mappedBy = "viagem", fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
+    private List<CheckList> checkList;
 
     public Viagem(String nome, String descricao, LocalDate dataIda, LocalDate dataVolta) {
         this.nome = nome;

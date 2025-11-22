@@ -3,74 +3,52 @@ package io.github.beinlichsimone.vacationtrip.controller;
 import io.github.beinlichsimone.vacationtrip.dto.passeio.PasseioDTO;
 import io.github.beinlichsimone.vacationtrip.dto.passeio.PasseioAtualizarDTO;
 import io.github.beinlichsimone.vacationtrip.dto.passeio.PasseioDetalheDTO;
-import io.github.beinlichsimone.vacationtrip.model.Passeio;
-import io.github.beinlichsimone.vacationtrip.repository.PasseioRepository;
-import io.github.beinlichsimone.vacationtrip.repository.ViagemRepository;
+import io.github.beinlichsimone.vacationtrip.services.PasseioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("passeio")
+@RequestMapping({"/passeios", "/passeio"})
 public class PasseioController {
 
     @Autowired
-    private PasseioRepository passeioRepository;
-
-    @Autowired
-    private ViagemRepository viagemRepository;
+    private PasseioService passeioService;
 
     @PostMapping
-    @Transactional
     public ResponseEntity<PasseioDTO> cadastrar(@RequestBody @Valid PasseioDTO passeioDTO, UriComponentsBuilder uriBuilder){
-        Passeio passeio = passeioDTO.converter(viagemRepository);
-        passeioRepository.save(passeio);
-
-        URI uri = uriBuilder.path("passeio/{id}").buildAndExpand(passeio.getId()).toUri();
-        return ResponseEntity.created(uri).body(new PasseioDTO((passeio)));
+        PasseioDTO created = passeioService.create(passeioDTO);
+        URI uri = uriBuilder.path("/passeios/{id}").buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uri).body(created);
     }
 
-    @GetMapping("/passeios")
-    public List<PasseioDTO> getPasseios(){
-        List<Passeio> passeios = passeioRepository.findAll();
-        return PasseioDTO.converterParaDTO(passeios);
+    @GetMapping({"", "/passeios"})
+    public Page<PasseioDTO> getPasseios(Pageable pageable){
+        return passeioService.list(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PasseioDetalheDTO> getPasseioById(@PathVariable("id") Integer id){
-        Optional<Passeio> passeio = passeioRepository.findById(id);
-        if (passeio.isPresent()){
-            return ResponseEntity.ok(new PasseioDetalheDTO(passeio.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return passeioService.get(id)
+                .map(dto -> ResponseEntity.ok(new PasseioDetalheDTO(new io.github.beinlichsimone.vacationtrip.model.Passeio(dto.getId(), dto.getNome(), dto.getDescricao(), dto.getObservacao(), dto.getLinks(), dto.getDataPasseio(), null))))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    @Transactional
-    public ResponseEntity<PasseioDTO> atualizar(@PathVariable("id") Integer id, @RequestBody PasseioAtualizarDTO passeioAtualizarDTO){
-        Optional<Passeio> passeio = passeioRepository.findById(id);
-        if (passeio.isPresent()){
-            Passeio passeioAtualizada = passeioAtualizarDTO.atualizar(id, passeioRepository);
-            return ResponseEntity.ok(new PasseioDTO(passeioAtualizada));
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<PasseioDTO> atualizar(@PathVariable("id") Integer id, @RequestBody @Valid PasseioAtualizarDTO passeioAtualizarDTO){
+        return ResponseEntity.of(passeioService.update(id, passeioAtualizarDTO));
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity remover (@PathVariable("id") Integer id){
-        Optional<Passeio> passeio = passeioRepository.findById(id);
-        if (passeio.isPresent()){
-            passeioRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
+    public ResponseEntity<Void> remover (@PathVariable("id") Integer id){
+        boolean deleted = passeioService.delete(id);
+        if (deleted) return ResponseEntity.noContent().build();
         return ResponseEntity.notFound().build();
     }
 }

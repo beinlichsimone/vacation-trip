@@ -23,7 +23,7 @@ public class Documento {
 
     private String numero;
 
-    private String observação;
+    private String observacao;
 
     @OneToMany( mappedBy = "documento", fetch = FetchType.EAGER )
     private List<ImagemDocumento> imagens;
@@ -33,11 +33,11 @@ public class Documento {
     @JsonBackReference
     private Pessoa pessoa;
 
-    public Documento(Integer id, String nome, String numero, String observação, Pessoa pessoa) {
+    public Documento(Integer id, String nome, String numero, String observacao, Pessoa pessoa) {
         this.id = id;
         this.nome = nome;
         this.numero = numero;
-        this.observação = observação;
+        this.observacao = observacao;
         this.pessoa = pessoa;
     }
 }

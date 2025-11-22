@@ -19,10 +19,19 @@ public class CheckList {
     @NotBlank
     private String nome;
 
-    private String observação;
+    @Column(name = "checked")
+    private Boolean checked;
 
-    @OneToOne
+    private String observacao;
+
+    @ManyToOne
     @JoinColumn(name = "viagem_id")
     private Viagem viagem;
 
+    public CheckList(Integer id, Boolean checked, String observacao, Viagem viagem) {
+        this.id = id;
+        this.checked = checked;
+        this.observacao = observacao;
+        this.viagem = viagem;
+    }
 }

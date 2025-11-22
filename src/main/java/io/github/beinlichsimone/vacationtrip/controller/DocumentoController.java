@@ -3,74 +3,52 @@ package io.github.beinlichsimone.vacationtrip.controller;
 import io.github.beinlichsimone.vacationtrip.dto.documento.DocumentoAtualizarDTO;
 import io.github.beinlichsimone.vacationtrip.dto.documento.DocumentoDTO;
 import io.github.beinlichsimone.vacationtrip.dto.documento.DocumentoDetalheDTO;
-import io.github.beinlichsimone.vacationtrip.model.Documento;
-import io.github.beinlichsimone.vacationtrip.repository.DocumentoRepository;
-import io.github.beinlichsimone.vacationtrip.repository.PessoaRepository;
+import io.github.beinlichsimone.vacationtrip.services.DocumentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("documento")
+@RequestMapping({"/documentos", "/documento"})
 public class DocumentoController {
 
     @Autowired
-    private DocumentoRepository documentoRepository;
-
-    @Autowired
-    private PessoaRepository pessoaRepository;
+    private DocumentoService documentoService;
 
     @PostMapping
-    @Transactional
     public ResponseEntity<DocumentoDTO> cadastrar(@RequestBody @Valid DocumentoDTO documentoDTO, UriComponentsBuilder uriBuilder){
-        Documento documento = documentoDTO.converter(pessoaRepository);
-        documentoRepository.save(documento);
-
-        URI uri = uriBuilder.path("documento/{id}").buildAndExpand(documento.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DocumentoDTO((documento)));
+        DocumentoDTO created = documentoService.create(documentoDTO);
+        URI uri = uriBuilder.path("/documentos/{id}").buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uri).body(created);
     }
 
-    @GetMapping("/documentos")
-    public List<DocumentoDTO> getDocumentos(){
-        List<Documento> documentos = documentoRepository.findAll();
-        return DocumentoDTO.converterParaDTO(documentos);
+    @GetMapping({"", "/documentos"})
+    public Page<DocumentoDTO> getDocumentos(Pageable pageable){
+        return documentoService.list(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DocumentoDetalheDTO> getDocumentoById(@PathVariable("id") Integer id){
-        Optional<Documento> documento = documentoRepository.findById(id);
-        if (documento.isPresent()){
-            return ResponseEntity.ok(new DocumentoDetalheDTO(documento.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return documentoService.get(id)
+                .map(dto -> ResponseEntity.ok(new DocumentoDetalheDTO(new io.github.beinlichsimone.vacationtrip.model.Documento(dto.getId(), dto.getNome(), dto.getNumero(), dto.getObservacao(), null))))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    @Transactional
-    public ResponseEntity<DocumentoDTO> atualizar(@PathVariable("id") Integer id, @RequestBody DocumentoAtualizarDTO documentoAtualizarDTO){
-        Optional<Documento> documento = documentoRepository.findById(id);
-        if (documento.isPresent()){
-            Documento documentoAtualizada = documentoAtualizarDTO.atualizar(id, documentoRepository);
-            return ResponseEntity.ok(new DocumentoDTO(documentoAtualizada));
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<DocumentoDTO> atualizar(@PathVariable("id") Integer id, @RequestBody @Valid DocumentoAtualizarDTO documentoAtualizarDTO){
+        return ResponseEntity.of(documentoService.update(id, documentoAtualizarDTO));
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity remover (@PathVariable("id") Integer id){
-        Optional<Documento> documento = documentoRepository.findById(id);
-        if (documento.isPresent()){
-            documentoRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
+    public ResponseEntity<Void> remover (@PathVariable("id") Integer id){
+        boolean deleted = documentoService.delete(id);
+        if (deleted) return ResponseEntity.noContent().build();
         return ResponseEntity.notFound().build();
     }
 }

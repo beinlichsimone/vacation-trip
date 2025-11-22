@@ -2,6 +2,7 @@ package io.github.beinlichsimone.vacationtrip.dto.viagem;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.beinlichsimone.vacationtrip.dto.deslocamento.DeslocamentoDTO;
+import io.github.beinlichsimone.vacationtrip.dto.checklist.ChecklistDTO;
 import io.github.beinlichsimone.vacationtrip.dto.passeio.PasseioDTO;
 import io.github.beinlichsimone.vacationtrip.dto.pessoa.PessoaDTO;
 import io.github.beinlichsimone.vacationtrip.model.Viagem;
@@ -31,6 +32,7 @@ public class ViagemDetalheDTO {
     private List<PessoaDTO> pessoas;
     private List<PasseioDTO> passeios;
     private List<DeslocamentoDTO> deslocamentos;
+    private List<ChecklistDTO> checklists;
 
     public ViagemDetalheDTO(Viagem viagem) {
         this.id = viagem.getId();
@@ -56,6 +58,10 @@ public class ViagemDetalheDTO {
         this.deslocamentos = viagem.getDeslocamentos() == null ? List.of() : viagem.getDeslocamentos()
                 .stream()
                 .map(DeslocamentoDTO::new)
+                .collect(Collectors.toList());
+        this.checklists = viagem.getCheckList() == null ? List.of() : viagem.getCheckList()
+                .stream()
+                .map(ChecklistDTO::new)
                 .collect(Collectors.toList());
     }
 }

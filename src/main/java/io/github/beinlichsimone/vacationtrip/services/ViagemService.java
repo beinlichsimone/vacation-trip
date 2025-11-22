@@ -1,6 +1,7 @@
 package io.github.beinlichsimone.vacationtrip.services;
 
 import io.github.beinlichsimone.vacationtrip.dto.viagem.ViagemDTO;
+import io.github.beinlichsimone.vacationtrip.dto.viagem.ViagemDetalheDTO;
 import io.github.beinlichsimone.vacationtrip.model.Viagem;
 import io.github.beinlichsimone.vacationtrip.repository.ViagemRepository;
 import org.modelmapper.ModelMapper;
@@ -27,8 +28,8 @@ public class ViagemService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Viagem> encontrarDetalhesPeloId(Integer id){
-        return viagemRepository.findWithDetalhesById(id);
+    public Optional<ViagemDetalheDTO> encontrarDetalhesPeloId(Integer id){
+        return viagemRepository.findWithDetalhesById(id).map(ViagemDetalheDTO::new);
     }
 
     public void deletarPeloId(Integer id){

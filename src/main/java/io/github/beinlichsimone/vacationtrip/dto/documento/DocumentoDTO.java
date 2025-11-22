@@ -25,7 +25,7 @@ public class DocumentoDTO {
     @NotBlank
     private String nome;
     private String numero;
-    private String observação;
+    private String observacao;
     private Integer idPessoa;
 
     public DocumentoDTO(Documento documento) {
@@ -42,6 +42,6 @@ public class DocumentoDTO {
 
     public Documento converter(PessoaRepository pessoaRepository){
         Pessoa pessoa = pessoaRepository.findById(idPessoa).get();
-        return new Documento(id, nome, numero, observação, pessoa);
+        return new Documento(id, nome, numero, observacao, pessoa);
     }
 }

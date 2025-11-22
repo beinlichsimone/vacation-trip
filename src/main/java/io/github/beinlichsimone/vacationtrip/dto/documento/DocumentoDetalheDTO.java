@@ -20,7 +20,7 @@ public class DocumentoDetalheDTO {
     @NotBlank
     private String nome;
     private String numero;
-    private String observação;
+    private String observacao;
     private Integer idPessoa;
     private List<ImagemDocumento> imagensDocumento;
 
@@ -28,7 +28,7 @@ public class DocumentoDetalheDTO {
         this.id = documento.getId();
         this.nome = documento.getNome();
         this.numero = documento.getNumero();
-        this.observação = documento.getObservação();
+        this.observacao = documento.getObservacao();
         this.idPessoa = documento.getPessoa().getId();
         this.imagensDocumento = new ArrayList<>();
         this.imagensDocumento.addAll(documento.getImagens().stream().map(ImagemDocumento::new).collect(Collectors.toList()));

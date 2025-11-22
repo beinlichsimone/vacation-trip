@@ -23,7 +23,7 @@ public class PasseioDTO {
     @NotBlank
     private String nome;
     private String descricao;
-    private String observação;
+    private String observacao;
     private String links;
     private LocalDate dataPasseio;
     private Integer idViagem;
@@ -43,6 +43,6 @@ public class PasseioDTO {
 
     public Passeio converter(ViagemRepository viagemRepository){
         Viagem viagem = viagemRepository.findById(idViagem).get();
-        return new Passeio(id, nome, descricao, observação, links, dataPasseio, viagem);
+        return new Passeio(id, nome, descricao, observacao, links, dataPasseio, viagem);
     }
 }
