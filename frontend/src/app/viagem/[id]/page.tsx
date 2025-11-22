@@ -139,6 +139,34 @@ export default function ViagemDetalhePage() {
               )}
             </CardContent>
           </Card>
+
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>Checklists</Typography>
+              {data.checklists?.length ? (
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Nome</TableCell>
+                      <TableCell>Concluído</TableCell>
+                      <TableCell>Observação</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.checklists.map((c, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell>{c.nome}</TableCell>
+                        <TableCell>{c.checked ? "Sim" : "Não"}</TableCell>
+                        <TableCell>{c.observacao}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Typography variant="body2" color="text.secondary">Nenhum checklist cadastrado.</Typography>
+              )}
+            </CardContent>
+          </Card>
         </Stack>
       ) : null}
     </Stack>

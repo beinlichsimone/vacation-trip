@@ -56,8 +56,8 @@ public class ViagemController {
 
     @GetMapping("/{id}/detalhe")
     public ResponseEntity<ViagemDetalheDTO> detalhe(@PathVariable("id") Integer id){
-        Optional<Viagem> viagem = viagemService.encontrarDetalhesPeloId(id);
-        return viagem.map(v -> ResponseEntity.ok(new ViagemDetalheDTO(v)))
+        Optional<ViagemDetalheDTO> viagem = viagemService.encontrarDetalhesPeloId(id);
+        return viagem.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

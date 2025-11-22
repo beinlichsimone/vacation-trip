@@ -72,6 +72,7 @@ export type ViagemDetalheDTO = ViagemDTO & {
   pessoas: PessoaDTO[];
   passeios: PasseioDTO[];
   deslocamentos: DeslocamentoDTO[];
+  checklists: ChecklistDTO[];
 };
 
 export async function getViagemDetalhe(id: number): Promise<ViagemDetalheDTO> {
