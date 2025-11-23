@@ -26,6 +26,7 @@ public class User implements UserDetails {
     private Boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    //roles ou profiles
     private List<Perfil> perfis = new ArrayList<>();
 
     @Override
@@ -55,6 +56,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return Boolean.TRUE.equals(enabled);
     }
 }

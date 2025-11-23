@@ -1,3 +1,8 @@
 Implementar o login
 gravar arquivos no S3
 desenvolver o voos
+vincular arquivo na entidade documento
+Implementar os perfis de usuário (revisar a funcionalidade que tem hj)
+n exibir o password no f12 
+revisar se tem secrets no projeto (vacation-trip.jwt.secret)
+Implementar testes

@@ -2,12 +2,21 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
 const API_BASE = "/api"; // via next.config.js rewrites para o backend
 
+export class ApiError extends Error {
+  status: number;
+  fieldErrors?: Record<string, string>;
+  constructor(message: string, status: number, fieldErrors?: Record<string, string>) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.fieldErrors = fieldErrors;
+  }
+}
+
 function getAuthHeader(): Record<string, string> {
   if (typeof window === "undefined") return {};
-  // Em desenvolvimento, evitamos enviar Authorization para não causar 403 quando o backend estiver sem exigir auth
-  const requireAuth = process.env.NEXT_PUBLIC_REQUIRE_AUTH === "true";
-  if (!requireAuth) return {};
   const token = localStorage.getItem("auth_token");
+  // Sempre envia o token quando existir; sem token, não envia Authorization
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -25,8 +34,37 @@ export async function api<T>(path: string, options?: { method?: HttpMethod; body
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `Request failed: ${res.status}`);
+    const contentType = res.headers.get("content-type") || "";
+    try {
+      if (contentType.includes("application/json")) {
+        const data = await res.json();
+        // Caso 1: lista de erros [{ campo, erro }]
+        if (Array.isArray(data) && data.length && data[0]?.campo && data[0]?.erro) {
+          const fieldErrors: Record<string, string> = {};
+          for (const it of data) {
+            const k = String(it.campo);
+            const v = String(it.erro);
+            fieldErrors[k] = fieldErrors[k] ? `${fieldErrors[k]}; ${v}` : v;
+          }
+          const message = Object.entries(fieldErrors).map(([k, v]) => `${k}: ${v}`).join(" | ");
+          throw new ApiError(message || "Requisição inválida", res.status, fieldErrors);
+        }
+        // Caso 2: objeto com message
+        if (data?.message) {
+          throw new ApiError(String(data.message), res.status);
+        }
+        // Fallback genérico
+        throw new ApiError(JSON.stringify(data), res.status);
+      } else {
+        const text = await res.text();
+        throw new ApiError(text || `Request failed: ${res.status}`, res.status);
+      }
+    } catch (e: any) {
+      // Se deu erro ao parsear, garanta que lançamos algo útil
+      if (e instanceof ApiError) throw e;
+      const text = await res.text().catch(() => "");
+      throw new ApiError(text || `Request failed: ${res.status}`, res.status);
+    }
   }
   const contentType = res.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {
@@ -36,13 +74,42 @@ export async function api<T>(path: string, options?: { method?: HttpMethod; body
 }
 
 export async function login(email: string, password: string): Promise<void> {
-  const data = await api<{ token: string; tipo: string }>("/auth", {
-    method: "POST",
-    body: { email, password },
-    headers: {},
-  });
-  if (typeof window !== "undefined") {
-    localStorage.setItem("auth_token", data.token);
+  try {
+    const data = await api<{ token: string; tipo: string }>("/auth", {
+      method: "POST",
+      body: { email, password },
+      headers: {},
+    });
+    if (typeof window !== "undefined") {
+      localStorage.setItem("auth_token", data.token);
+    }
+  } catch (e: any) {
+    const status = Number(e?.status ?? 0);
+    const msg = String(e?.message ?? "");
+    if (status === 400 || status === 401 || msg.includes("401") || msg.includes("400")) {
+      throw new Error("Email ou senha inválidos.");
+    }
+    throw e;
+  }
+}
+
+export async function register(nome: string, email: string, password: string): Promise<void> {
+  // Backend retorna TokenDTO, então já salvamos o token
+  try {
+    const data = await api<{ token: string; tipo: string }>("/auth/register", {
+      method: "POST",
+      body: { nome, email, password },
+    });
+    if (typeof window !== "undefined" && data?.token) {
+      localStorage.setItem("auth_token", data.token);
+    }
+  } catch (e: any) {
+    const status = Number(e?.status ?? 0);
+    const msg = String(e?.message ?? "");
+    if (status === 409 || msg.includes("409")) {
+      throw new Error("E-mail já cadastrado.");
+    }
+    throw e;
   }
 }
 
