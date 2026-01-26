@@ -10,6 +10,8 @@ async function forward(req: NextRequest, path: string, method: string) {
   if (contentType) headers.set("content-type", contentType);
   const auth = req.headers.get("authorization");
   if (auth) headers.set("authorization", auth);
+  const tenant = req.headers.get("x-tenant-id");
+  if (tenant) headers.set("x-tenant-id", tenant);
 
   const body = method === "GET" || method === "HEAD" ? undefined : (req.body as any);
 
@@ -38,7 +40,7 @@ export async function OPTIONS() {
     headers: {
       "access-control-allow-origin": "*",
       "access-control-allow-methods": "GET,POST,PUT,DELETE,OPTIONS",
-      "access-control-allow-headers": "Content-Type, Authorization",
+      "access-control-allow-headers": "Content-Type, Authorization, X-Tenant-ID",
       "access-control-max-age": "3600",
     },
   });

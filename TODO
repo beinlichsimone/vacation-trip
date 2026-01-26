@@ -6,3 +6,5 @@ Implementar os perfis de usuário (revisar a funcionalidade que tem hj)
 n exibir o password no f12 
 revisar se tem secrets no projeto (vacation-trip.jwt.secret)
 Implementar testes
+verificar multitenant
+migrar para o Istio (service mesh, sidecard), com isso n precisa mais do eureka
