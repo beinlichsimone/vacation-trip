@@ -1,6 +1,7 @@
 package io.github.beinlichsimone.vacationtrip.config.security;
 
 import io.github.beinlichsimone.vacationtrip.repository.UserRepository;
+import io.github.beinlichsimone.vacationtrip.config.tenancy.TenantRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,9 @@ public class SecurityConfiguration {
     @Autowired
     private UserRepository usuarioRepository;
 
+    @Autowired
+    private TenantRequestFilter tenantRequestFilter;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -57,6 +61,8 @@ public class SecurityConfiguration {
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated();                                   //todo o resto será bloqueado
 
+        // Garante que o tenant seja resolvido antes da autenticação
+        http.addFilterBefore(tenantRequestFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

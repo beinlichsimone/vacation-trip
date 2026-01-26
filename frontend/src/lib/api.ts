@@ -2,6 +2,17 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
 const API_BASE = "/api"; // via next.config.js rewrites para o backend
 
+function getTenantHeader(): Record<string, string> {
+  // Prioriza header definido pelo app (env) e permite override via localStorage
+  const fromEnv = process.env.NEXT_PUBLIC_TENANT;
+  if (typeof window === "undefined") {
+    return fromEnv ? { "X-Tenant-ID": String(fromEnv) } : {};
+  }
+  const fromStorage = localStorage.getItem("tenant_id");
+  const tenant = fromStorage || fromEnv;
+  return tenant ? { "X-Tenant-ID": String(tenant) } : {};
+}
+
 export class ApiError extends Error {
   status: number;
   fieldErrors?: Record<string, string>;
@@ -27,6 +38,7 @@ export async function api<T>(path: string, options?: { method?: HttpMethod; body
     headers: {
       "Content-Type": "application/json",
       ...getAuthHeader(),
+      ...getTenantHeader(),
       ...headers,
     },
     body: body ? JSON.stringify(body) : undefined,

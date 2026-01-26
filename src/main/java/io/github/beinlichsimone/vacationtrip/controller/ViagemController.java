@@ -37,7 +37,10 @@ public class ViagemController {
     private ModelMapper modelMapper;
 
     @GetMapping({"", "/viagens"})
-    @Cacheable(value="listaViagens")
+	@Cacheable(
+			value = "listaViagens",
+			key = "T(io.github.beinlichsimone.vacationtrip.config.tenancy.TenantContext).getCurrentTenant() + ':' + #p0.pageNumber + ':' + #p0.pageSize + ':' + #p0.sort"
+	)
     public Page<ViagemDTO> getViagens(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable paginacao){
     // O cache não deve ser usado em tabelas que são muito utilizadas, pois existe um custo de processamento armazenar e apagar a memória cache. Deve ser estudado onde faz sentido utilizar o cache
 
