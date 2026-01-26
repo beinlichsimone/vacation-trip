@@ -50,5 +50,3 @@ public class ChecklistController {
         return ResponseEntity.notFound().build();
     }
 }
-
- 

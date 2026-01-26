@@ -14,7 +14,7 @@
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
     "@mui/material-nextjs": "^7.3.3",
-    "next": "14.2.10",
+    "next": "^14.2.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "zod": "3.23.8"

@@ -1,6 +1,5 @@
 package io.github.beinlichsimone.vacationtrip.config.security;
 
-import io.github.beinlichsimone.vacationtrip.model.User;
 import io.github.beinlichsimone.vacationtrip.repository.UserRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +26,7 @@ public class AutenticacaoViaTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = recuperarToken(request);
-        boolean valido = tokenService.isTokenValido(token);
+        boolean valido = token != null && tokenService.isTokenValido(token);
         if (valido){
             autenticarCliente(token);
         }
@@ -38,9 +37,10 @@ public class AutenticacaoViaTokenFilter extends OncePerRequestFilter {
 
     private void autenticarCliente(String token) {
         Long idUsuario = tokenService.getIdUsuario(token);
-        User usuario = userRepository.findById(idUsuario).get();
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        userRepository.findById(idUsuario).ifPresent(usuario -> {
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        });
     }
 
     private String recuperarToken(HttpServletRequest request) {

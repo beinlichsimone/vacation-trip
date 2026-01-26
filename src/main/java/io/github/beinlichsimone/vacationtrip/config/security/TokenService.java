@@ -1,6 +1,7 @@
 package io.github.beinlichsimone.vacationtrip.config.security;
 
 import io.github.beinlichsimone.vacationtrip.model.User;
+import io.github.beinlichsimone.vacationtrip.config.tenancy.TenantContext;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,10 +25,13 @@ public class TokenService {
         Date hoje = new Date();
         Date dataExpiracao = new Date(hoje.getTime() + Long.parseLong(expiration) );
 
+        String currentTenant = TenantContext.getCurrentTenant();
+
         return Jwts.builder().setIssuer("API Vacation Trip")
                 .setSubject(logado.getId().toString())
                 .setIssuedAt(hoje)
                 .setExpiration(dataExpiracao)
+                .claim("tenant", currentTenant) // propaga o schema/tenant atual no token
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
@@ -45,5 +49,11 @@ public class TokenService {
     public Long getIdUsuario(String token) {
         Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
         return Long.parseLong(claims.getSubject());
+    }
+
+    public String getStringClaim(String token, String claimName) {
+        Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
+        Object value = claims.get(claimName);
+        return value != null ? String.valueOf(value) : null;
     }
 }
